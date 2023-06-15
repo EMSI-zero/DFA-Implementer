@@ -74,3 +74,40 @@ class State:
         else:
             return ""
 
+inputFile = open("DFA_input_1.txt", "r")
+lines = inputFile.readlines()
+lNum = 0
+alphabet = []
+states = []
+start = ""
+finalStates = []
+rules = []
+for l in lines:
+    match (lNum):
+        case 0:
+            alphabet = re.split(' |\n', l)[:-1]
+            print(alphabet)
+        case 1:
+            states = re.split(' |\n',l)[:-1]
+            print(states)
+        case 2:
+            start = re.split(' |\n', l)[0]
+            print(start)
+        case 3:
+            finalStates = re.split(' |\n', l)[:-1]
+            print(finalStates)
+        case _:
+            rule = re.split(' |\n', l)
+            rules.append(rule)
+    lNum += 1
+
+dfa = Automata( alphabet, states, start, finalStates)
+for rule in rules:
+    print(dfa.add_new_rule(rule[0], rule[1], rule[2]))
+
+
+print(dfa.validate("aaa"))
+print(dfa.validate("a"))
+print(dfa.validate("aba"))
+print(dfa.validate("aaaaaaaab"))
+print(dfa.validate("abaaaaaa"))
