@@ -1,76 +1,76 @@
 # a program to implement a Deterministic Finite Automata with given parameters
-
+import re
 
 # Class representing a finite state automata
 class Automata:
-    def __init__(self, alphabet : list[str], stateSet : list[str], start : str, finalSet : list[str]) -> None:
+    def __init__(
+        self, alphabet: list[str], stateSet: list[str], start: str, finalSet: list[str]
+    ) -> None:
         self.alphabet = alphabet
         self.stateSet = {}
         self.finalSet = finalSet
         for s in stateSet:
             self.stateSet[s] = State(s)
-            if s == start: 
+            if s == start:
                 self.start = self.stateSet[s]
-            
-            
+
         self.head = self.start
-    
+
     # check the final state and condition of exit
     def check_final(self, state):
         if state.name in self.finalSet:
             return True
         return False
-    
+
     # define a new rule for automata
-    def add_new_rule(self, input : str, currState : str, nextState : str):
+    def add_new_rule(self, currState: str, input: str, nextState: str):
         if currState not in self.stateSet:
+            print(currState)
             return "state  does not exist"
         if nextState not in self.stateSet:
             return "next state  does not exist"
         self.stateSet[currState].add_rule(input, self.stateSet[nextState])
         return "rule added"
-        
+
+    #Accepting an input
     def validate(self, input: str):
-        i = 0
-        for c in input:
-            #check final state on last input
-            if i == len(input)-1:
+        for i in range(-1,len(input)):
+            i += 1
+            
+            # check final state on last input
+            if i == len(input) or len(input) == 0:
+                print("checking final state")
                 if self.check_final(self.head):
                     return True
+                self.reset_automata()
                 return False
-            if self.head.next_state(c) != "":
-                self.head = self.stateSet[self.head.next_state(c)]
+            elif self.head.next_state(input[i]) != "":
+                self.head = self.stateSet[self.head.next_state(input[i])]
             else:
+                self.reset_automata()
                 return False
-            i+= 1
-        
+
+        self.reset_automata()
         return False
-            
-        
-#Class representing a state of the automata
+
+    #set current state to initial state
+    def reset_automata(self):
+        self.head = self.start
+
+# Class representing a state of the automata
 class State:
     def __init__(self, name) -> None:
         self.name = name
         self.rules = {}
 
-    #add new rule for going to the next state
+    # add new rule for going to the next state
     def add_rule(self, input, next):
         self.rules[input] = next
-    
-    #get the next state based on input
-    def next_state(self, input) : 
+
+    # get the next state based on input
+    def next_state(self, input):
         if input in self.rules:
             return self.rules[input].name
-        else: 
+        else:
             return ""
-            
 
-dfa = Automata(["a","b"], ["q1","q2"], "q1", ["q2"])
-
-print(dfa.add_new_rule("a", "q1", "q2"))
-print(dfa.add_new_rule("a", "q2", "q2"))
-
-print(dfa.validate("aaa"))
-print(dfa.validate("aba"))
-print(dfa.validate("aaaaaaaab"))
-print(dfa.validate("abaaaaaa"))
