@@ -29,6 +29,8 @@ class Automata:
             return "state  does not exist"
         if nextState not in self.stateSet:
             return "next state  does not exist"
+        if input not in self.alphabet:
+            return "input not in alphabet"
         self.stateSet[currState].add_rule(input, self.stateSet[nextState])
         return "rule added"
 
@@ -39,7 +41,6 @@ class Automata:
             
             # check final state on last input
             if i == len(input) or len(input) == 0:
-                print("checking final state")
                 if self.check_final(self.head):
                     return True
                 self.reset_automata()
@@ -108,6 +109,7 @@ for rule in rules:
 
 print(dfa.validate("aaa"))
 print(dfa.validate("a"))
+print(dfa.validate("b"))
 print(dfa.validate("aba"))
-print(dfa.validate("aaaaaaaab"))
+print(dfa.validate("aaaaaaab"))
 print(dfa.validate("abaaaaaa"))
